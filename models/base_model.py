@@ -24,7 +24,8 @@ class BaseModel:
         """
         Return string representation of BaseModel.
         """
-        return "[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__)
+        return "[{}] ({}) {}"
+    .format(self.__class__.__name__, self.id, self.__dict__)
 
     def save(self):
         """
@@ -34,7 +35,8 @@ class BaseModel:
 
     def to_dict(self):
         """
-        Return a dictionary containing all keys and values of __dict__ of the instance.
+        Return a dictionary
+        containing all keys and values of __dict__ of the instance.
         """
 
         obj_dict = self.__dict__.copy()

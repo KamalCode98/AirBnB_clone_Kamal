@@ -3,7 +3,7 @@
 Defines the BaseModel class.
 """
 import models
-from uuid import uuid4
+import uuid
 from datetime import datetime
 
 
@@ -24,8 +24,7 @@ class BaseModel:
         """
         Return string representation of BaseModel.
         """
-        return "[{}] ({}) {}"
-    .format(self.__class__.__name__, self.id, self.__dict__)
+        return "[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__)
 
     def save(self):
         """

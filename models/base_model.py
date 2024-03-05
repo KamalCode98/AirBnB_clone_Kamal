@@ -12,19 +12,24 @@ class BaseModel:
     Represents the BaseModel of project
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """
         Initialize BaseModel instance.
         """
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        if kwargs:
+            """
+            Initialize instance attributes from kwargs
+            """
+            for key, value in kwargs.items():
+                if key == 'created_at' or key == 'updated_at':
+                    value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
+                if key != '__class__':
+                    setattr(self, key, value)
 
-    def __str__(self):
-        """
-        Return string representation of BaseModel.
-        """
-        return "[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__)
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
 
     def save(self):
         """
@@ -33,13 +38,14 @@ class BaseModel:
         self.updated_at = datetime.now()
 
     def to_dict(self):
-        """
-        Return a dictionary
-        containing all keys and values of __dict__ of the instance.
-        """
+        """Return a dictionary representation of the instance."""
+        obj_di = self.__dict__.copy()
+        obj_di['__class__'] = self.__class__.__name__
+        obj_di['created_at'] = self.created_at.strftime('%Y-%m-%dT%H:%M:%S.%f')
+        obj_di['updated_at'] = self.updated_at.strftime('%Y-%m-%dT%H:%M:%S.%f')
+        return obj_di
 
-        obj_dict = self.__dict__.copy()
-        obj_dict['__class__'] = self.__class__.__name__
-        obj_dict['created_at'] = self.created_at.isoformat()
-        obj_dict['updated_at'] = self.updated_at.isoformat()
-        return obj_dict
+    def __str__(self):
+        """Return the print/str representation of the BaseModel instance."""
+        stname = self.__class__.__name__
+        return "[{}] ({}) {}".format(stname, self.id, self.__dict__)

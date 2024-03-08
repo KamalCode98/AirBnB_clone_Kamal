@@ -1,5 +1,7 @@
 import json
 import os
+from models.base_model import BaseModel
+from models.user import User
 
 
 class FileStorage:
@@ -23,13 +25,12 @@ class FileStorage:
 
     def reload(self):
         """Deserializes the JSON file to __objects"""
-        if os.path.isfile(FileStorage.__file_path):
+        try:
             with open(FileStorage.__file_path, 'r') as f:
                 objs = json.load(f)
-                from models.base_model import BaseModel  # import here to avoid circular import
-                for obj_id, obj_data in objs.items():
-                    cls_name = obj_data['__class__']
-                    del obj_data['__class__']
-                    if cls_name == 'BaseModel':
-                        obj = BaseModel(**obj_data)
-                        FileStorage.__objects[obj_id] = obj
+                for obj_id, obj_dict in objects.items():
+                    cls_name = obj_dict['__class__']
+                    cls = globals()[cls_name]
+                    FileStorage.__objects[obj_id] = cls(**obj_dict)
+        except FileNotFoundError:
+                pass
